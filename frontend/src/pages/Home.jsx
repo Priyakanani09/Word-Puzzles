@@ -31,8 +31,8 @@ function Home() {
           {["W", "O", "R", "D"].map((letter, i) => (
             <span
               key={i}
-              className={`bg-white text-cyan-700 px-2 sm:px-2 md:ml-1 rounded font-bold mx-[2px]
-                      ${i % 2 === 0 ? "-translate-y-1" : "translate-y-1"}
+              className={`bg-white text-cyan-700 px-2 sm:px-2 rounded font-bold mx-[2px]
+                      ${i % 2 === 0 ? "-translate-y-0" : "translate-y-2"}
                   `}
             >
               {letter}
@@ -51,7 +51,7 @@ function Home() {
           Select Difficulty:
         </h2>
 
-        <div className="flex flex-col gap-5 w-52 max-w-xs">
+        <div className="flex flex-col gap-5 w-44 max-w-xs">
           {levels.map((level, index) => (
             <button
               key={index}
