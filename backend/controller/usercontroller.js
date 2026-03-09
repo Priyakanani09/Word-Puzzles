@@ -5,6 +5,27 @@ const jwt = require("jsonwebtoken");
 exports.registeruser = async (req,res) => {
   try {
     const {name,email,password} = req.body;
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{1,12}$/i;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message: [
+          "Password must be at least 12 characters",
+          "Include 1 uppercase letter (A–Z)",
+          "Include lowercase letter (a–z)",
+          "Include number (0–9)",
+          "Include 1 special symbol (@ # $ %)",
+        ],
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        message: "Password and Confirm Password do not match"
+      });
+    }
+    
     const userExits = await User.findOne({email});
     if (userExits) {
       return res.status(400).json({
