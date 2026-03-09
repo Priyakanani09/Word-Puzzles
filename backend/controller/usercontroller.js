@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 exports.registeruser = async (req,res) => {
   try {
-    const {name,email,password} = req.body;
+    const {name,email,password,confirmPassword } = req.body;
 
     const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{1,12}$/i;
 
@@ -25,7 +25,7 @@ exports.registeruser = async (req,res) => {
         message: "Password and Confirm Password do not match"
       });
     }
-    
+
     const userExits = await User.findOne({email});
     if (userExits) {
       return res.status(400).json({
@@ -75,5 +75,54 @@ exports.loginUser = async (req,res) => {
   }
   catch(err){
     res.status(500).json({ message: err.message});
+  }
+}
+
+exports.getuser = async (req, res) => {
+  try {
+    const data = await Sign.find();
+    res.status(200).json({ message: "Find Successfully", data });
+  } catch (err) {
+    res.status(400).json({ message: "user not find", error: err.message });
+  }
+};
+
+exports.forgotpassword = async (req,res) => {
+  try {
+    const { email,newPassword } = req.body;
+    if(!email || !newPassword){
+      return res.status(400).json({ message: "Email and new password required" });
+    } 
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{1,12}$/i;
+
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        message: [
+          "Password must be at least 12 characters",
+          "Include 1 uppercase letter (A–Z)",
+          "Include lowercase letter (a–z)",
+          "Include number (0–9)",
+          "Include 1 special symbol (@ # $ %)",
+        ],
+      });
+    }
+    
+    const user = await Sign.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword,10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+     res.status(200).json({
+      message: "Password reset successful. Please login with new password."
+    });
+  }
+  catch(err){
+     res.status(500).json({ message: "Forgot password failed", error });
   }
 }
