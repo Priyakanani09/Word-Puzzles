@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
+import { FaBars, FaUser } from "react-icons/fa";
+import { useState } from "react";
 
 function Home() {
-  const navigate = useNavigate();
+   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   const levels = [
     { name: "Easy", value: "easy" },
@@ -16,15 +17,36 @@ function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#5f8fb6] to-[#6f93b8] flex flex-col">
       {/* Navbar */}
-      <div className="flex justify-between items-center px-4 sm:px-8 py-4 text-white">
-        <div
-          className="w-10 h-10 
-                rounded-full 
-                border border-white
-                bg-white/10
-                flex items-center justify-center"
-        >
-          <FaUser className="text-white text-sm" size={24} />
+      <div className="flex justify-between items-center px-4 sm:px-8 py-4 text-white relative">
+
+        {/* User Icon */}
+        <div className="relative">
+
+          <div
+            onClick={() => setOpen(!open)}
+            className="w-10 h-10 rounded-full border border-white bg-white/10 flex items-center justify-center cursor-pointer"
+          >
+            <FaUser size={20} />
+          </div>
+          {open && (
+            <div className="absolute left-0 mt-2 w-32 bg-white text-black rounded shadow-lg z-10">
+
+              <button
+                onClick={() => navigate("/login")}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Login
+              </button>
+
+              <button
+                onClick={() => navigate("/register")}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Register
+              </button>
+
+            </div>
+          )}
         </div>
         {/* Logo */}
         <h1 className="flex items-center text-lg sm:text-2xl font-bold">
