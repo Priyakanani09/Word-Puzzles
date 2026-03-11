@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -40,7 +42,7 @@ function Register() {
       setMessage(data.message || "Registration failed");
       return;
     }
-
+     navigate("/");
     setMessage(data.message);
 
     } catch (error) {

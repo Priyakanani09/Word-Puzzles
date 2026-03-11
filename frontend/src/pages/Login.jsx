@@ -48,9 +48,7 @@ function Login() {
       setMessage("Login successful");
 
       // redirect to home
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+     navigate("/");
 
     } catch (error) {
       setMessage("Server error");
