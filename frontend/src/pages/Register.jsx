@@ -42,8 +42,14 @@ function Register() {
       setMessage(data.message || "Registration failed");
       return;
     }
-     navigate("/");
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ name: formData.name })
+    );
+
     setMessage(data.message);
+
+    navigate("/");
 
     } catch (error) {
       console.log(error)

@@ -45,10 +45,12 @@ function Login() {
       // save token
       localStorage.setItem("token", data.token);
 
-      setMessage("Login successful");
+    // save user info
+    localStorage.setItem("user", JSON.stringify(data.user));
 
-      // redirect to home
-     navigate("/");
+    setMessage("Login successful");
+
+    navigate("/");
 
     } catch (error) {
       setMessage("Server error");
