@@ -24,6 +24,15 @@ function Game() {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
+  const colors = [
+    "bg-green-300/40",
+    "bg-yellow-300/40",
+    "bg-pink-300/40",
+    "bg-blue-300/40",
+    "bg-purple-300/40",
+    "bg-orange-300/40"
+  ];
+
   // 🔥 Format Time
   const formatTime = (time) => {
     const min = Math.floor(time / 60);
@@ -47,15 +56,15 @@ function Game() {
   }, [isRunning, isLoading]);
 
   // 🔹 Stop timer
-  useEffect(() => {
-    if (
-      selectedWords.length > 0 &&
-      foundWords.length === selectedWords.length
-    ) {
-      setIsRunning(false);
-      setShowModal(true); // ✅ modal open
-    }
-  }, [foundWords, selectedWords]);
+useEffect(() => {
+  if (
+    selectedWords.length > 0 &&
+    foundWords.length === selectedWords.length
+  ) {
+    setIsRunning(false);
+    setShowModal(true); // ✅ modal open
+  }
+}, [foundWords, selectedWords]);
 
   // 🔹 Fetch words
   useEffect(() => {
@@ -182,30 +191,36 @@ function Game() {
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+  setIsDragging(false);
 
-    const word = selectedCells.map((c) => c.letter).join("");
-    const reversed = word.split("").reverse().join("");
+  const word = selectedCells.map(c => c.letter).join("");
+  const reversed = word.split("").reverse().join("");
 
-    let matchedWord = null;
+  let matchedWord = null;
 
-    if (selectedWords.includes(word)) {
-      matchedWord = word;
-    } else if (selectedWords.includes(reversed)) {
-      matchedWord = reversed;
-    }
+  if (selectedWords.includes(word)) matchedWord = word;
+  else if (selectedWords.includes(reversed)) matchedWord = reversed;
 
-    if (matchedWord) {
-      setFoundCells((prev) => [...prev, ...selectedCells]);
+  if (matchedWord) {
 
-      setFoundWords((prev) => {
-        if (prev.includes(matchedWord)) return prev;
-        return [...prev, matchedWord];
-      });
-    }
+    // 🔥 color assign
+    const color = colors[foundWords.length % colors.length];
 
-    setSelectedCells([]);
-  };
+    const coloredCells = selectedCells.map(cell => ({
+      ...cell,
+      color
+    }));
+
+    setFoundCells(prev => [...prev, ...coloredCells]);
+
+    setFoundWords(prev => {
+      if (prev.includes(matchedWord)) return prev;
+      return [...prev, matchedWord];
+    });
+  }
+
+  setSelectedCells([]);
+};
 
   return (
     <div
@@ -240,9 +255,9 @@ function Game() {
                 (c) => c.row === rowIndex && c.col === colIndex,
               );
 
-              const isFound = foundCells.some(
-                (c) => c.row === rowIndex && c.col === colIndex,
-              );
+             const foundCell = foundCells.find(
+  (c) => c.row === rowIndex && c.col === colIndex,
+);
 
               return (
                 <div
@@ -255,8 +270,8 @@ function Game() {
                   }
                   className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 !text-[14px] sm:text-sm md:text-base flex items-center justify-center font-bold border rounded-md cursor-pointer transition-all
   
-                  ${isSelected ? "bg-blue-500 text-white scale-105" : ""}
-                  ${isFound ? "bg-green-500 text-white" : ""}
+                 ${isSelected ? "bg-blue-300/40" : ""}
+                  ${foundCell ? foundCell.color : ""}
                   hover:bg-blue-200
                   `}
                 >
@@ -286,56 +301,66 @@ function Game() {
       </div>
 
       {/* Result */}
-      {showModal && (
-        <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
-            {/* Top Gradient */}
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+   {showModal && (
+  <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
 
-            {/* Trophy Icon */}
-            <div className="flex justify-center mb-3 text-yellow-500 text-4xl">
-              <FaTrophy />
-            </div>
+    <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
 
-            {/* Title */}
-            <h2 className="text-xl font-bold text-gray-800 mb-1">You Win!</h2>
+      {/* Top Gradient */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 
-            <p className="text-gray-500 text-sm mb-4">Amazing performance 🚀</p>
+      {/* Trophy Icon */}
+      <div className="flex justify-center mb-3 text-yellow-500 text-4xl">
+        <FaTrophy />
+      </div>
 
-            {/* Time Box */}
-            <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl py-3 mb-5">
-              <BsClockFill className="text-blue-500 text-lg" />
-              <span className="text-2xl font-bold text-blue-600">
-                {formatTime(time)}
-              </span>
-            </div>
+      {/* Title */}
+      <h2 className="text-xl font-bold text-gray-800 mb-1">
+        You Win!
+      </h2>
 
-            {/* Buttons */}
-            <div className="flex gap-3">
-              {/* Home */}
-              <button
-                onClick={() => navigate("/")}
-                className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg font-semibold transition"
-              >
-                <FaHome />
-                Home
-              </button>
+      <p className="text-gray-500 text-sm mb-4">
+        Amazing performance 🚀
+      </p>
 
-              {/* Next */}
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  generateNewPuzzle(words);
-                }}
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-lg font-semibold transition shadow"
-              >
-                <MdReplay />
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Time Box */}
+      <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl py-3 mb-5">
+        <BsClockFill className="text-blue-500 text-lg" />
+        <span className="text-2xl font-bold text-blue-600">
+          {formatTime(time)}
+        </span>
+      </div>
+
+      {/* Buttons */}
+      <div className="flex gap-3">
+
+        {/* Home */}
+        <button
+          onClick={() => navigate("/")}
+          className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg font-semibold transition"
+        >
+          <FaHome />
+          Home
+        </button>
+
+        {/* Next */}
+        <button
+          onClick={() => {
+            setShowModal(false);
+            generateNewPuzzle(words);
+          }}
+          className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-lg font-semibold transition shadow"
+        >
+          <MdReplay />
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
       {/* Button */}
       <button
         onClick={() => generateNewPuzzle(words)}
