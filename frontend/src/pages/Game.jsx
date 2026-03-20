@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { FaTrophy, FaHome } from "react-icons/fa";
+import { MdReplay } from "react-icons/md";
+import { BsClockFill } from "react-icons/bs";
 
 function Game() {
   const { level } = useParams();
@@ -17,6 +21,8 @@ function Game() {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   // 🔥 Format Time
   const formatTime = (time) => {
@@ -47,6 +53,7 @@ function Game() {
       foundWords.length === selectedWords.length
     ) {
       setIsRunning(false);
+      setShowModal(true); // ✅ modal open
     }
   }, [foundWords, selectedWords]);
 
@@ -279,12 +286,56 @@ function Game() {
       </div>
 
       {/* Result */}
-      {!isRunning && !isLoading && (
-        <div className="mt-4 text-green-300 text-xl font-bold">
-          🎉 Completed in {formatTime(time)}
+      {showModal && (
+        <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
+            {/* Top Gradient */}
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+
+            {/* Trophy Icon */}
+            <div className="flex justify-center mb-3 text-yellow-500 text-4xl">
+              <FaTrophy />
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-gray-800 mb-1">You Win!</h2>
+
+            <p className="text-gray-500 text-sm mb-4">Amazing performance 🚀</p>
+
+            {/* Time Box */}
+            <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl py-3 mb-5">
+              <BsClockFill className="text-blue-500 text-lg" />
+              <span className="text-2xl font-bold text-blue-600">
+                {formatTime(time)}
+              </span>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              {/* Home */}
+              <button
+                onClick={() => navigate("/")}
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg font-semibold transition"
+              >
+                <FaHome />
+                Home
+              </button>
+
+              {/* Next */}
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  generateNewPuzzle(words);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-lg font-semibold transition shadow"
+              >
+                <MdReplay />
+                Next
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
       {/* Button */}
       <button
         onClick={() => generateNewPuzzle(words)}
