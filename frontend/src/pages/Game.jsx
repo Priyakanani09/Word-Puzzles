@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { FaTrophy, FaHome } from "react-icons/fa";
+import { FaTrophy, FaHome, FaBars } from "react-icons/fa";
 import { MdReplay } from "react-icons/md";
 import { BsClockFill } from "react-icons/bs";
 
@@ -22,15 +22,18 @@ function Game() {
   const [isRunning, setIsRunning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showGiveUpModal, setShowGiveUpModal] = useState(false);
+  const [hintsRemaining, setHintsRemaining] = useState(2);
   const navigate = useNavigate();
 
   const colors = [
-    "bg-green-300/40",
-    "bg-yellow-300/40",
-    "bg-pink-300/40",
-    "bg-blue-300/40",
-    "bg-purple-300/40",
-    "bg-orange-300/40"
+    "bg-green-500/40",
+    "bg-yellow-500/40",
+    "bg-pink-500/40",
+    "bg-blue-500/40",
+    "bg-purple-500/40",
+    "bg-orange-500/40"
   ];
 
   // 🔥 Format Time
@@ -56,15 +59,15 @@ function Game() {
   }, [isRunning, isLoading]);
 
   // 🔹 Stop timer
-useEffect(() => {
-  if (
-    selectedWords.length > 0 &&
-    foundWords.length === selectedWords.length
-  ) {
-    setIsRunning(false);
-    setShowModal(true); // ✅ modal open
-  }
-}, [foundWords, selectedWords]);
+  useEffect(() => {
+    if (
+      selectedWords.length > 0 &&
+      foundWords.length === selectedWords.length
+    ) {
+      setIsRunning(false);
+      setShowModal(true);
+    }
+  }, [foundWords, selectedWords]);
 
   // 🔹 Fetch words
   useEffect(() => {
@@ -101,6 +104,7 @@ useEffect(() => {
     setFoundCells([]);
     setFoundWords([]);
     setTime(0);
+    setHintsRemaining(2);
 
     setIsLoading(false);
     setIsRunning(true);
@@ -122,10 +126,12 @@ useEffect(() => {
       }
 
       let placed = false;
+      let attempts = 0;
 
-      while (!placed) {
+      while (!placed && attempts < 200) {
+        attempts++;
         const row = Math.floor(Math.random() * size);
-        const col = Math.floor(Math.random() * (size - word.length));
+        const col = Math.floor(Math.random() * (size - word.length + 1));
 
         let canPlace = true;
 
@@ -142,6 +148,10 @@ useEffect(() => {
           }
           placed = true;
         }
+      }
+
+      if (!placed) {
+        console.warn(`Could not place word: ${word}`);
       }
     });
 
@@ -190,43 +200,133 @@ useEffect(() => {
     });
   };
 
+  const handleHint = () => {
+    setIsMenuOpen(false);
+
+    if (hintsRemaining <= 0) return;
+
+    const remainingWords = selectedWords.filter((w) => !foundWords.includes(w));
+    if (remainingWords.length === 0) return;
+
+    const wordToHint = remainingWords[0];
+    const reversedWord = wordToHint.split("").reverse().join("");
+    let matchCells = null;
+
+    // Find wordToHint or reversedWord in the grid
+    for (let r = 0; r < grid.length; r++) {
+      const rowStr = grid[r].join("");
+      let idx = rowStr.indexOf(wordToHint);
+      let isReversed = false;
+
+      if (idx === -1) {
+        idx = rowStr.indexOf(reversedWord);
+        isReversed = true;
+      }
+
+      if (idx !== -1) {
+        matchCells = [];
+        for (let i = 0; i < wordToHint.length; i++) {
+          matchCells.push({
+            row: r,
+            col: idx + i,
+            letter: isReversed ? reversedWord[i] : wordToHint[i],
+          });
+        }
+        break;
+      }
+    }
+
+    if (matchCells) {
+      const color = colors[foundWords.length % colors.length];
+      const coloredCells = matchCells.map((cell) => ({
+        ...cell,
+        color,
+      }));
+      setFoundCells((prev) => [...prev, ...coloredCells]);
+      setFoundWords((prev) => [...prev, wordToHint]);
+      setHintsRemaining((prev) => prev - 1);
+    }
+  };
+
   const handleMouseUp = () => {
-  setIsDragging(false);
+    setIsDragging(false);
 
-  const word = selectedCells.map(c => c.letter).join("");
-  const reversed = word.split("").reverse().join("");
+    const word = selectedCells.map(c => c.letter).join("");
+    const reversed = word.split("").reverse().join("");
 
-  let matchedWord = null;
+    let matchedWord = null;
 
-  if (selectedWords.includes(word)) matchedWord = word;
-  else if (selectedWords.includes(reversed)) matchedWord = reversed;
+    if (selectedWords.includes(word)) matchedWord = word;
+    else if (selectedWords.includes(reversed)) matchedWord = reversed;
 
-  if (matchedWord) {
+    if (matchedWord) {
 
-    // 🔥 color assign
-    const color = colors[foundWords.length % colors.length];
+      // 🔥 color assign
+      const color = colors[foundWords.length % colors.length];
 
-    const coloredCells = selectedCells.map(cell => ({
-      ...cell,
-      color
-    }));
+      const coloredCells = selectedCells.map(cell => ({
+        ...cell,
+        color
+      }));
 
-    setFoundCells(prev => [...prev, ...coloredCells]);
+      setFoundCells(prev => [...prev, ...coloredCells]);
 
-    setFoundWords(prev => {
-      if (prev.includes(matchedWord)) return prev;
-      return [...prev, matchedWord];
-    });
-  }
+      setFoundWords(prev => {
+        if (prev.includes(matchedWord)) return prev;
+        return [...prev, matchedWord];
+      });
+    }
 
-  setSelectedCells([]);
-};
+    setSelectedCells([]);
+  };
 
   return (
     <div
       onMouseUp={handleMouseUp}
-      className="min-h-screen flex flex-col py-6 items-center justify-center px-4 bg-gradient-to-br from-[#5f8fb6] to-[#6f93b8]"
+      className="relative min-h-screen flex flex-col py-6 items-center justify-center px-4 bg-gradient-to-br from-[#5f8fb6] to-[#6f93b8]"
     >
+      {/* Hamburger Menu */}
+      <div
+        className="absolute top-4 right-4 z-40"
+        onMouseLeave={() => setIsMenuOpen(false)}
+      >
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onMouseEnter={() => setIsMenuOpen(true)}
+          className="text-white text-2xl p-2 rounded-md transition "
+        >
+          <FaBars />
+        </button>
+
+        {isMenuOpen && (
+          <div className="absolute right-0 bg-white rounded-lg shadow-xl overflow-hidden min-w-[150px]">
+            <button
+              onClick={() => { setIsMenuOpen(false); generateNewPuzzle(words); }}
+              className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 font-semibold border-b transition"
+            >
+              New Game
+            </button>
+            <button
+              onClick={handleHint}
+              disabled={hintsRemaining <= 0}
+              className={`block w-full text-left px-4 py-3 font-semibold border-b transition ${
+                hintsRemaining > 0 
+                  ? "text-gray-700 hover:bg-gray-100" 
+                  : "text-gray-400 cursor-not-allowed bg-gray-50 bg-opacity-50"
+              }`}
+            >
+              Hint ({hintsRemaining})
+            </button>
+            <button
+              onClick={() => { setIsMenuOpen(false); setShowGiveUpModal(true); }}
+              className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition"
+            >
+              Give Up
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Title */}
       <h1 className="text-white text-3xl font-bold mb-2 uppercase tracking-wide">
         {level} Level
@@ -255,9 +355,9 @@ useEffect(() => {
                 (c) => c.row === rowIndex && c.col === colIndex,
               );
 
-             const foundCell = foundCells.find(
-  (c) => c.row === rowIndex && c.col === colIndex,
-);
+              const foundCell = foundCells.find(
+                (c) => c.row === rowIndex && c.col === colIndex,
+              );
 
               return (
                 <div
@@ -289,10 +389,9 @@ useEffect(() => {
           <span
             key={index}
             className={`px-3 py-1 rounded-full text-sm font-semibold
-              ${
-                foundWords.includes(word)
-                  ? "bg-green-400 line-through"
-                  : "bg-white/20"
+              ${foundWords.includes(word)
+                ? "bg-green-400 line-through"
+                : "bg-white/20"
               }`}
           >
             {word}
@@ -300,74 +399,92 @@ useEffect(() => {
         ))}
       </div>
 
+      {/* Give Up Modal */}
+      {showGiveUpModal && (
+        <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
+            <h2 className="text-xl font-bold text-gray-800 mb-6">
+              Are you sure you want to give up?
+            </h2>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowGiveUpModal(false)}
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg font-semibold transition"
+              >
+                No
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="flex-1 flex items-center justify-center gap-2 bg-red-500 text-white hover:bg-red-600 py-2 rounded-lg font-semibold transition shadow"
+              >
+                Sure
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Result */}
-   {showModal && (
-  <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      {showModal && (
+        <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
 
-    <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
+          <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
 
-      {/* Top Gradient */}
-      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+            {/* Top Gradient */}
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 
-      {/* Trophy Icon */}
-      <div className="flex justify-center mb-3 text-yellow-500 text-4xl">
-        <FaTrophy />
-      </div>
+            {/* Trophy Icon */}
+            <div className="flex justify-center mb-3 text-yellow-500 text-4xl">
+              <FaTrophy />
+            </div>
 
-      {/* Title */}
-      <h2 className="text-xl font-bold text-gray-800 mb-1">
-        You Win!
-      </h2>
+            {/* Title */}
+            <h2 className="text-xl font-bold text-gray-800 mb-1">
+              You Win!
+            </h2>
 
-      <p className="text-gray-500 text-sm mb-4">
-        Amazing performance 🚀
-      </p>
+            <p className="text-gray-500 text-sm mb-4">
+              Amazing performance 🚀
+            </p>
 
-      {/* Time Box */}
-      <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl py-3 mb-5">
-        <BsClockFill className="text-blue-500 text-lg" />
-        <span className="text-2xl font-bold text-blue-600">
-          {formatTime(time)}
-        </span>
-      </div>
+            {/* Time Box */}
+            <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl py-3 mb-5">
+              <BsClockFill className="text-blue-500 text-lg" />
+              <span className="text-2xl font-bold text-blue-600">
+                {formatTime(time)}
+              </span>
+            </div>
 
-      {/* Buttons */}
-      <div className="flex gap-3">
+            {/* Buttons */}
+            <div className="flex gap-3">
 
-        {/* Home */}
-        <button
-          onClick={() => navigate("/")}
-          className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg font-semibold transition"
-        >
-          <FaHome />
-          Home
-        </button>
+              {/* Home */}
+              <button
+                onClick={() => navigate("/")}
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 py-2 rounded-lg font-semibold transition"
+              >
+                <FaHome />
+                Home
+              </button>
 
-        {/* Next */}
-        <button
-          onClick={() => {
-            setShowModal(false);
-            generateNewPuzzle(words);
-          }}
-          className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-lg font-semibold transition shadow"
-        >
-          <MdReplay />
-          Next
-        </button>
+              {/* Next */}
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  generateNewPuzzle(words);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-lg font-semibold transition shadow"
+              >
+                <MdReplay />
+                Next
+              </button>
 
-      </div>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
-)}
-      {/* Button */}
-      <button
-        onClick={() => generateNewPuzzle(words)}
-        className="mt-6 bg-white text-black px-6 py-2 rounded-lg font-semibold shadow hover:bg-gray-200 transition"
-      >
-        Next Puzzle
-      </button>
+        </div>
+      )}
     </div>
   );
 }
