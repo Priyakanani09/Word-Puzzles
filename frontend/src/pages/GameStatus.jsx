@@ -22,7 +22,7 @@ function GameStatus() {
     setLoading(true);
     // Determine API URL (using localhost for local development since the API on onrender is not updated yet)
     // Change this to your production URL when deploying
-    const API_URL = "http://localhost:5002"; 
+    const API_URL = "https://word-puzzles.onrender.com"; 
 
     try {
       const user = JSON.parse(localStorage.getItem("user"));

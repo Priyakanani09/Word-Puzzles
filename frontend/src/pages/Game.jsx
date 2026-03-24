@@ -71,7 +71,7 @@ function Game() {
       // Save game stats to backend
       const user = JSON.parse(localStorage.getItem("user"));
       if (user && user.name) {
-        fetch("http://localhost:5002/gamestatus", {
+        fetch("https://word-puzzles.onrender.com/gamestatus", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
