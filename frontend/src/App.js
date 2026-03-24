@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Game from './pages/Game';
 
 import { Route, Routes, Navigate } from 'react-router-dom';
+import GameStatus from './pages/GameStatus';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
       {/* Auth */}
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/gamestatus" element={<GameStatus />} />
 
       {/* Game (Protected) */}
       <Route

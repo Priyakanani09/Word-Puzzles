@@ -84,7 +84,7 @@ function Home() {
                   </button>
 
                   <button
-                    onClick={() => navigate("/stats")}
+                    onClick={() => navigate("/gamestatus")}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                   >
                     Game Stats

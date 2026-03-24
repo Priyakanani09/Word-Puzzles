@@ -62,12 +62,27 @@ function Game() {
   useEffect(() => {
     if (
       selectedWords.length > 0 &&
-      foundWords.length === selectedWords.length
+      foundWords.length === selectedWords.length &&
+      isRunning // Only trigger if it was previously running to avoid multiple calls
     ) {
       setIsRunning(false);
       setShowModal(true);
+
+      // Save game stats to backend
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.name) {
+        fetch("http://localhost:5002/gamestatus", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userName: user.name,
+            difficulty: level,
+            time: time,
+          }),
+        }).catch((err) => console.error("Failed to save game stats:", err));
+      }
     }
-  }, [foundWords, selectedWords]);
+  }, [foundWords, selectedWords, isRunning, level, time]);
 
   // 🔹 Fetch words
   useEffect(() => {
