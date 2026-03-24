@@ -77,13 +77,6 @@ function Home() {
               {user && (
                 <>
                   <button
-                    onClick={() => navigate("/profile")}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  >
-                    Profile
-                  </button>
-
-                  <button
                     onClick={() => navigate("/gamestatus")}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                   >

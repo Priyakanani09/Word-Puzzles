@@ -20,8 +20,7 @@ function GameStatus() {
 
   const fetchDataForDifficulty = async (difficulty) => {
     setLoading(true);
-    // Determine API URL (using localhost for local development since the API on onrender is not updated yet)
-    // Change this to your production URL when deploying
+    
     const API_URL = "https://word-puzzles.onrender.com"; 
 
     try {
@@ -60,7 +59,7 @@ function GameStatus() {
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"></div>
       
       <div 
-        className="relative z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scaleIn"
+        className="relative z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[80vh] overflow-hidden animate-scaleIn"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
