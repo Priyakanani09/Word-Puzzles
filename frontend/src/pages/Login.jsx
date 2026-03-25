@@ -106,7 +106,7 @@ function Login() {
           Don't have an account?{" "}
           <span
             onClick={() => navigate("/register")}
-            className="text-cyan-700 cursor-pointer font-semibold"
+            className="text-cyan-700 cursor-pointer font-bold"
           >
             Register
           </span>

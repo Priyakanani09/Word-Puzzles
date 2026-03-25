@@ -63,7 +63,7 @@ function Game() {
     if (
       selectedWords.length > 0 &&
       foundWords.length === selectedWords.length &&
-      isRunning // Only trigger if it was previously running to avoid multiple calls
+      isRunning
     ) {
       setIsRunning(false);
       setShowModal(true);

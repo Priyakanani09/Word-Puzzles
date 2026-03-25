@@ -42,16 +42,6 @@ function App() {
         }
       />
 
-      {/* 404 */}
-      <Route
-        path="*"
-        element={
-          <div className="flex items-center justify-center h-screen text-2xl font-bold">
-            404 - Page Not Found
-          </div>
-        }
-      />
-
     </Routes>
   );
 }

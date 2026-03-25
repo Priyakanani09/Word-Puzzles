@@ -20,14 +20,12 @@ function GameStatus() {
 
   const fetchDataForDifficulty = async (difficulty) => {
     setLoading(true);
-    
-    const API_URL = "https://word-puzzles.onrender.com"; 
 
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const userNameQuery = user && user.name ? `?userName=${encodeURIComponent(user.name)}` : "";
       
-      const response = await fetch(`${API_URL}/gamestatus/${difficulty.toLowerCase()}${userNameQuery}`);
+      const response = await fetch(`https://word-puzzles.onrender.com/gamestatus/${difficulty.toLowerCase()}${userNameQuery}`);
       if (response.ok) {
         const data = await response.json();
         setTotalGamesPlayed(data.totalGamesPlayed || 0);
@@ -59,7 +57,7 @@ function GameStatus() {
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"></div>
       
       <div 
-        className="relative z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[80vh] overflow-hidden animate-scaleIn"
+        className="relative z-50 w-full max-w-xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scaleIn"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -155,5 +153,4 @@ function GameStatus() {
     </div>
   );
 }
-
 export default GameStatus;

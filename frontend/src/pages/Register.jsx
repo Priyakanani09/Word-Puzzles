@@ -42,10 +42,13 @@ function Register() {
       setMessage(data.message || "Registration failed");
       return;
     }
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ name: formData.name })
-    );
+    localStorage.setItem("token", data.token);
+
+// optional
+localStorage.setItem(
+  "user",
+  JSON.stringify({ name: formData.name })
+);
 
     setMessage(data.message);
 
@@ -119,6 +122,16 @@ function Register() {
         {message && (
           <p className="text-center text-red-500 mt-4">{message}</p>
         )}
+
+        <p className="text-center text-sm mt-4">
+          Already registered?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            className="text-cyan-700 cursor-pointer font-bold"
+          >
+            Login
+          </span>
+        </p>
 
       </div>
 
