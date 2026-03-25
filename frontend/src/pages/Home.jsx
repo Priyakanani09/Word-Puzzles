@@ -108,7 +108,7 @@ function Home() {
           ))}
 
           {/* Hide SEARCH on very small screens */}
-          <span className="ml-2 tracking-wider hidden sm:block">SEARCH</span>
+          <span className="ml-2 tracking-wider sm:block">SEARCH</span>
         </h1>
 
         {/* Menu Icon */}

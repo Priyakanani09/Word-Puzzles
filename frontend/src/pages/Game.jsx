@@ -63,7 +63,7 @@ function Game() {
     if (
       selectedWords.length > 0 &&
       foundWords.length === selectedWords.length &&
-      isRunning
+      isRunning 
     ) {
       setIsRunning(false);
       setShowModal(true);
@@ -359,7 +359,7 @@ function Game() {
         </div>
       ) : (
         <div
-          className="grid gap-[2px] sm:gap-1 bg-white/90 p-2 sm:p-3 rounded-sm shadow-xl"
+          className="grid gap-[10px] md:gap-[6px] bg-white/90 p-3 rounded-sm shadow-xl"
           style={{
             gridTemplateColumns: `repeat(${grid.length}, minmax(0, 1fr))`,
           }}
