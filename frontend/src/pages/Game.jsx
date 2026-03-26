@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaTrophy, FaHome, FaBars } from "react-icons/fa";
 import { MdReplay } from "react-icons/md";
 import { BsClockFill } from "react-icons/bs";
+import "../App.css";
 
 function Game() {
   const { level } = useParams();
@@ -33,7 +34,7 @@ function Game() {
     "bg-pink-500/40",
     "bg-blue-500/40",
     "bg-purple-500/40",
-    "bg-orange-500/40"
+    "bg-orange-500/40",
   ];
 
   // 🔥 Format Time
@@ -63,7 +64,7 @@ function Game() {
     if (
       selectedWords.length > 0 &&
       foundWords.length === selectedWords.length &&
-      isRunning 
+      isRunning
     ) {
       setIsRunning(false);
       setShowModal(true);
@@ -266,7 +267,7 @@ function Game() {
   const handleMouseUp = () => {
     setIsDragging(false);
 
-    const word = selectedCells.map(c => c.letter).join("");
+    const word = selectedCells.map((c) => c.letter).join("");
     const reversed = word.split("").reverse().join("");
 
     let matchedWord = null;
@@ -275,18 +276,17 @@ function Game() {
     else if (selectedWords.includes(reversed)) matchedWord = reversed;
 
     if (matchedWord) {
-
       // 🔥 color assign
       const color = colors[foundWords.length % colors.length];
 
-      const coloredCells = selectedCells.map(cell => ({
+      const coloredCells = selectedCells.map((cell) => ({
         ...cell,
-        color
+        color,
       }));
 
-      setFoundCells(prev => [...prev, ...coloredCells]);
+      setFoundCells((prev) => [...prev, ...coloredCells]);
 
-      setFoundWords(prev => {
+      setFoundWords((prev) => {
         if (prev.includes(matchedWord)) return prev;
         return [...prev, matchedWord];
       });
@@ -295,9 +295,39 @@ function Game() {
     setSelectedCells([]);
   };
 
+  const handleTouchStart = (row, col, letter) => {
+    setIsDragging(true);
+    setSelectedCells([{ row, col, letter }]);
+  };
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (!element) return;
+
+    const row = element.getAttribute("data-row");
+    const col = element.getAttribute("data-col");
+    const letter = element.getAttribute("data-letter");
+
+    if (row && col && letter) {
+      setSelectedCells((prev) => {
+        const exists = prev.some((c) => c.row == row && c.col == col);
+        if (exists) return prev;
+        return [...prev, { row: Number(row), col: Number(col), letter }];
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    handleMouseUp(); // reuse same logic
+  };
+
   return (
     <div
       onMouseUp={handleMouseUp}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className="relative min-h-screen flex flex-col py-6 items-center justify-center px-4 bg-gradient-to-br from-[#5f8fb6] to-[#6f93b8]"
     >
       {/* Hamburger Menu */}
@@ -316,7 +346,10 @@ function Game() {
         {isMenuOpen && (
           <div className="absolute right-0 bg-white rounded-lg shadow-xl overflow-hidden min-w-[150px]">
             <button
-              onClick={() => { setIsMenuOpen(false); generateNewPuzzle(words); }}
+              onClick={() => {
+                setIsMenuOpen(false);
+                generateNewPuzzle(words);
+              }}
               className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 font-semibold border-b transition"
             >
               New Game
@@ -325,15 +358,18 @@ function Game() {
               onClick={handleHint}
               disabled={hintsRemaining <= 0}
               className={`block w-full text-left px-4 py-3 font-semibold border-b transition ${
-                hintsRemaining > 0 
-                  ? "text-gray-700 hover:bg-gray-100" 
+                hintsRemaining > 0
+                  ? "text-gray-700 hover:bg-gray-100"
                   : "text-gray-400 cursor-not-allowed bg-gray-50 bg-opacity-50"
               }`}
             >
               Hint ({hintsRemaining})
             </button>
             <button
-              onClick={() => { setIsMenuOpen(false); setShowGiveUpModal(true); }}
+              onClick={() => {
+                setIsMenuOpen(false);
+                setShowGiveUpModal(true);
+              }}
               className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition"
             >
               Give Up
@@ -377,11 +413,17 @@ function Game() {
               return (
                 <div
                   key={rowIndex + "-" + colIndex}
+                  data-row={rowIndex}
+                  data-col={colIndex}
+                  data-letter={letter}
                   onMouseDown={() =>
                     handleMouseDown(rowIndex, colIndex, letter)
                   }
                   onMouseEnter={() =>
                     handleMouseEnter(rowIndex, colIndex, letter)
+                  }
+                  onTouchStart={() =>
+                    handleTouchStart(rowIndex, colIndex, letter)
                   }
                   className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 !text-[14px] sm:text-sm md:text-base flex items-center justify-center font-bold border rounded-md cursor-pointer transition-all
   
@@ -404,9 +446,10 @@ function Game() {
           <span
             key={index}
             className={`px-3 py-1 rounded-full text-sm font-semibold
-              ${foundWords.includes(word)
-                ? "bg-green-400 line-through"
-                : "bg-white/20"
+              ${
+                foundWords.includes(word)
+                  ? "bg-green-400 line-through"
+                  : "bg-white/20"
               }`}
           >
             {word}
@@ -442,9 +485,7 @@ function Game() {
       {/* Result */}
       {showModal && (
         <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-
           <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
-
             {/* Top Gradient */}
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 
@@ -454,13 +495,9 @@ function Game() {
             </div>
 
             {/* Title */}
-            <h2 className="text-xl font-bold text-gray-800 mb-1">
-              You Win!
-            </h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-1">You Win!</h2>
 
-            <p className="text-gray-500 text-sm mb-4">
-              Amazing performance 🚀
-            </p>
+            <p className="text-gray-500 text-sm mb-4">Amazing performance 🚀</p>
 
             {/* Time Box */}
             <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl py-3 mb-5">
@@ -472,7 +509,6 @@ function Game() {
 
             {/* Buttons */}
             <div className="flex gap-3">
-
               {/* Home */}
               <button
                 onClick={() => navigate("/")}
@@ -493,11 +529,8 @@ function Game() {
                 <MdReplay />
                 Next
               </button>
-
             </div>
-
           </div>
-
         </div>
       )}
     </div>
