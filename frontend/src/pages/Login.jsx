@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 function Login() {
 
@@ -45,12 +46,12 @@ function Login() {
       // save token
       localStorage.setItem("token", data.token);
 
-    // save user info
-    localStorage.setItem("user", JSON.stringify(data.user));
+      // save user info
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-    setMessage("Login successful");
+      setMessage("Login successful");
 
-    navigate("/");
+      navigate("/");
 
     } catch (error) {
       setMessage("Server error");
@@ -60,7 +61,17 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#5f8fb6] to-[#6f93b8] px-4">
 
-      <div className="bg-white/90 shadow-xl rounded-2xl w-full max-w-md p-8">
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4 flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-500 hover:text-cyan-700 rounded-full transition-all duration-300 transform hover:scale-110 shadow-sm"
+        title="Go to Home"
+      >
+        <FaHome size={20} />
+      </button>
+
+      <div className="bg-white/90 shadow-xl rounded-2xl w-full max-w-md p-8 relative">
+
+        {/* Home Button */}
 
         <h2 className="text-2xl font-bold text-center text-cyan-700 mb-6">
           Login

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 function Register() {
   const navigate = useNavigate();
@@ -36,23 +37,23 @@ function Register() {
         }
       );
 
-       const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      setMessage(data.message || "Registration failed");
-      return;
-    }
-    localStorage.setItem("token", data.token);
+      if (!response.ok) {
+        setMessage(data.message || "Registration failed");
+        return;
+      }
+      localStorage.setItem("token", data.token);
 
-// optional
-localStorage.setItem(
-  "user",
-  JSON.stringify({ name: formData.name })
-);
+      // optional
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ name: formData.name })
+      );
 
-    setMessage(data.message);
+      setMessage(data.message);
 
-    navigate("/");
+      navigate("/");
 
     } catch (error) {
       console.log(error)
@@ -62,6 +63,13 @@ localStorage.setItem(
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#5f8fb6] to-[#6f93b8] px-4">
 
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4 flex items-center justify-center w-10 h-10 bg-gray-100 text-gray-500 hover:text-cyan-700 rounded-full transition-all duration-300 transform hover:scale-110 shadow-sm"
+        title="Go to Home"
+      >
+        <FaHome size={20} />
+      </button>
       <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl w-full max-w-md p-8">
 
         <h2 className="text-2xl font-bold text-center text-cyan-700 mb-6">
