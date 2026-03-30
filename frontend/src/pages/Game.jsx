@@ -394,12 +394,13 @@ function Game() {
           Loading Puzzle...
         </div>
       ) : (
-        <div
-          className="grid gap-[10px] md:gap-[6px] bg-white/90 p-3 rounded-sm shadow-xl"
-          style={{
-            gridTemplateColumns: `repeat(${grid.length}, minmax(0, 1fr))`,
-          }}
-        >
+        <div className="w-full max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl px-2">
+          <div
+            className="grid gap-1 sm:gap-2 bg-white/90 p-2 sm:p-3 rounded-md shadow-xl"
+            style={{
+              gridTemplateColumns: `repeat(${grid.length}, minmax(0, 1fr))`,
+            }}
+          >
           {grid.map((row, rowIndex) =>
             row.map((letter, colIndex) => {
               const isSelected = selectedCells.some(
@@ -425,7 +426,7 @@ function Game() {
                   onTouchStart={() =>
                     handleTouchStart(rowIndex, colIndex, letter)
                   }
-                  className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 !text-[14px] sm:text-sm md:text-base flex items-center justify-center font-bold border rounded-md cursor-pointer transition-all
+                  className={`w-full aspect-square !text-[12px] sm:!text-[14px] md:!text-base lg:text-lg flex items-center justify-center font-bold border rounded-md cursor-pointer transition-all
   
                  ${isSelected ? "bg-blue-300/40" : ""}
                   ${foundCell ? foundCell.color : ""}
@@ -437,6 +438,7 @@ function Game() {
               );
             }),
           )}
+          </div>
         </div>
       )}
 
@@ -460,7 +462,7 @@ function Game() {
       {/* Give Up Modal */}
       {showGiveUpModal && (
         <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-          <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
+          <div className="bg-slate-100 rounded-2xl p-6 w-[90%] max-w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
             <h2 className="text-xl font-bold text-gray-800 mb-6">
               Are you sure you want to give up?
             </h2>
@@ -484,8 +486,8 @@ function Game() {
 
       {/* Result */}
       {showModal && (
-        <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-slate-100 rounded-2xl p-6 w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
+        <div className="fixed inset-0 bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-slate-100 rounded-2xl p-6 w-[90%] max-w-[320px] text-center shadow-2xl animate-scaleIn relative overflow-hidden">
             {/* Top Gradient */}
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 

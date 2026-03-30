@@ -70,7 +70,7 @@ function Register() {
       >
         <FaHome size={20} />
       </button>
-      <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl w-full max-w-md p-8">
+      <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl w-[90%] sm:w-full max-w-md p-6 sm:p-8 relative">
 
         <h2 className="text-2xl font-bold text-center text-cyan-700 mb-6">
           Create Account

@@ -24,7 +24,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#5f8fb6] to-[#6f93b8] flex flex-col">
       {/* Navbar */}
-      <div className="flex justify-between items-center sm:px-7 py-4 text-white relative">
+      <div className="flex justify-between items-center sm:px-7 py-4 p-2 text-white relative">
         {/* User Section */}
         <div
           className="relative"

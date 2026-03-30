@@ -69,7 +69,7 @@ function Login() {
         <FaHome size={20} />
       </button>
 
-      <div className="bg-white/90 shadow-xl rounded-2xl w-full max-w-md p-8 relative">
+      <div className="bg-white/90 shadow-xl rounded-2xl w-[90%] sm:w-full max-w-md p-6 sm:p-8 relative">
 
         {/* Home Button */}
 
