@@ -2,6 +2,7 @@ import './App.css';
 import Home from "./pages/Home";
 import Register from './pages/Register';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
 import Game from './pages/Game';
 
 import { Route, Routes, Navigate } from 'react-router-dom';
@@ -30,6 +31,7 @@ function App() {
       {/* Auth */}
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/gamestatus" element={<GameStatus />} />
 
       {/* Game (Protected) */}

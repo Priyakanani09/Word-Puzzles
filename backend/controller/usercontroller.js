@@ -88,7 +88,7 @@ exports.loginUser = async (req,res) => {
 
 exports.getuser = async (req, res) => {
   try {
-    const data = await Sign.find();
+    const data = await User.find();
     res.status(200).json({ message: "Find Successfully", data });
   } catch (err) {
     res.status(400).json({ message: "user not find", error: err.message });
@@ -116,7 +116,7 @@ exports.forgotpassword = async (req,res) => {
       });
     }
     
-    const user = await Sign.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
